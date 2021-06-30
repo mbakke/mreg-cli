@@ -3,6 +3,7 @@ import configparser
 import getpass
 import logging
 import shlex
+from sys import exit
 
 from prompt_toolkit import HTML
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
@@ -111,7 +112,7 @@ def main():
     if 'mock_traffic' in conf:
         if 'record_traffic' in conf:
             print("You can't use both the playback and record options at the same time!")
-            raise SystemExit()
+            exit(1)
         m.start_playback(conf['mock_traffic'])
     elif 'record_traffic' in conf:
         m.start_recording(conf['record_traffic'])
@@ -122,16 +123,16 @@ def main():
     else:
         if "user" not in conf:
             print("Username not set in config or as argument")
-            return
+            exit(1)
         elif "url" not in conf:
             print("mreg url not set in config or as argument")
-            return
+            exit(1)
 
         try:
             util.login1(conf["user"], conf["url"])
         except (EOFError, KeyboardInterrupt):
             print('')
-            raise SystemExit()
+            exit(1)
         if args.show_token:
             print(util.session.headers["Authorization"])
 
